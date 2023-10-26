@@ -55,9 +55,15 @@ class _AddNotesState extends State<AddNotes> {
               ),
                SizedBox(height: 10,),
                ElevatedButton(onPressed:()async {
-                int response =  await sqlDb .insertDate('''
-INSERT INTO notes (`note`,`title`, `color`)VALUES("${note.text}","${title.text}","${color.text}")
-''');
+//                 int response =  await sqlDb .insert('''
+// INSERT INTO notes (`note`,`title`, `color`)VALUES("${note.text}","${title.text}","${color.text}")
+// ''');
+ int response =  await sqlDb .insert("notes",{
+"note" : "${note.text}",
+"title" : "${title.text}",
+"color" : "${color.text}",
+
+ });
 if(response >0)Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> Home()),(route) => false);
                 print('$response');
                }, child: Text('Add Note',

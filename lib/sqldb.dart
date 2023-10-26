@@ -148,24 +148,32 @@ print('Create______________________________');
  
        print('Upgrade______________________'); 
      }
-  readDate(String sql)async{
+  read(String table)async{
+  // readDate(String sql)async{
+
     Database? mydb = await db;
-    List<Map<String, Object?>> response = await mydb!.rawQuery(sql);
+    List<Map<String, Object?>> response = await mydb!.query(table);
     return response;
   }
-   insertDate(String sql)async{
+   insert(String table, Map<String, Object?> values,)async{
+  //  insertDate(String sql)async{
+
     Database? mydb = await db;
-    int response = await mydb!.rawInsert(sql);
+    int response = await mydb!.insert (table, values,);
     return response;
   }
-     updateDate(String sql)async{
+    //  updateDate(String sql)async{
+     update(String table, Map<String, Object?> values,String? mywhere)async{
+
     Database? mydb = await db;
-    int response = await mydb!.rawUpdate(sql);
+    int response = await mydb!.update(table, values,where: mywhere);
     return response;
   }
-     deleteDate(String sql)async{
+     delete( String table, String? mywhere)async{
+    //  deleteDate(String sql)async{
+
     Database? mydb = await db;
-    int response = await mydb!.rawDelete(sql);
+    int response = await mydb!.delete(table ,where: mywhere);
     return response;
   }
   //    insertDate(String sql)async{

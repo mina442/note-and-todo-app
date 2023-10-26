@@ -69,7 +69,14 @@ color.text = widget.color;
               ),
                SizedBox(height: 10,),
                ElevatedButton(onPressed:()async {
-            int response = await sqlDb .updateDate("UPDATE 'notes' SET note = '${note.text}',title = '${title.text}',color = '${color.text}' WHERE id = ${widget.id}");
+            int response = await sqlDb .update("notes",{
+"note" : "${note.text}",
+"title" : "${title.text}",
+"color" : "${color.text}",
+
+ },"id = ${widget.id}",);
+            
+            //int response = await sqlDb .updateDate("UPDATE 'notes' SET note = '${note.text}',title = '${title.text}',color = '${color.text}'  WHERE id = ${widget.id}");
 if(response >0)Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> Home()),(route) => false);
                 print('$response');
                }, child: Text('edit Note',

@@ -14,7 +14,9 @@ class _HomeState extends State<Home> {
   bool isLoading = true;
   List notes = [];
   Future readData()async{
-    List<Map> response = await sqlDb .readDate("SELECT * FROM 'notes'");
+    List<Map> response = await sqlDb .read("notes ");
+    // List<Map> response = await sqlDb .read("SELECT * FROM 'notes'");
+
     notes.addAll(response);
     isLoading = false;
     if(this.mounted){
@@ -66,7 +68,9 @@ children: [
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(onPressed: ()async{
-    int response = await sqlDb .deleteDate("DELETE FROM 'notes' WHERE id = ${notes[index]['id']}");
+    int response = await sqlDb .delete('notes', "id = ${notes[index]['id']}");
+   
+    // int response = await sqlDb .deleteDate("DELETE FROM 'notes' WHERE id = ${notes[index]['id']}");
     // if(response >0)Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Home()));
        notes.removeWhere((element) => element['id'] == notes[index]['id']);
        setState(() {
