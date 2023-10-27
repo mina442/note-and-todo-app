@@ -1,23 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:note_app/addNote.dart';
-// import 'package:note_app/Screens/TaskScreen.dart';
-import 'package:note_app/home.dart';
-import 'package:note_app/sqldb.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+// import 'package:note_app/h/page/notes_page.dart';
+import 'package:note_app/page/notes_page.dart';
+// import 'page/notes_page.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  runApp(const MainApp());
+}
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MainApp extends StatelessWidget {
+  static String title = 'Notes SQLite';
+
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    // SystemChrome.setSystemUIOverlayStyle
+    //   (SystemUiOverlayStyle(
+    //     statusBarColor: Colors.white,));
+    // return GetMaterialApp(
+     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Material App',
-      home:Home(),
-      routes: {
-        'addNotes':(context) => AddNotes()
-      },
+      title: title,
+      themeMode: ThemeMode.dark,
+      theme: ThemeData(
+        primaryColor: Colors.black,
+        scaffoldBackgroundColor: Colors.blueGrey.shade900,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+      ),
+      home: const NotesPage(),
     );
   }
 }
