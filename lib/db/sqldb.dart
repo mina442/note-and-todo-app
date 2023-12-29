@@ -3,16 +3,19 @@
 import 'package:note_app/model/note.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+
 
 class SqlDb {
 // static final NotesDatabase instance = NotesDatabase._init();
 //+NotesDatabase._init(); == mydb
 
+    // static final _dbName = "notes.db";
+  static final _dbVersion = 1;
   static Database? _database ; 
-  
   Future<Database?> get database async {
       if (_database == null){
-        _database  = await intialDb('notes.db') ;
+        _database  = await intialDb() ;
         return _database ;  
       }else {
         return _database ; 
@@ -20,16 +23,16 @@ class SqlDb {
   }
 
 
-  Future<Database>intialDb(String filePath) async {
-  final databasepath = await getDatabasesPath() ; 
-  final path = join(databasepath, filePath);  
-  Database mydb = await openDatabase(path , onCreate: _onCreate , version: 3  , onUpgrade:_onUpgrade ) ;  
+  Future<Database>intialDb() async {
+  final databasepath = await getApplicationDocumentsDirectory() ; 
+  // final databasepath = await getDatabasesPath() ; 
+
+  final path = join(databasepath.path, 'wael.db');  
+  Database mydb = await openDatabase(path , onCreate: _onCreate , version: _dbVersion , onUpgrade:_onUpgrade ) ;  
   return mydb ; 
 }
 
 _onUpgrade(Database db , int oldversion , int newversion ) {
-
-
  print("onUpgrade =====================================") ; 
   
 }
@@ -37,17 +40,15 @@ _onUpgrade(Database db , int oldversion , int newversion ) {
 _onCreate(Database db , int version) async {
    const idType = 'INTEGER  NOT NULL PRIMARY KEY  AUTOINCREMENT';
     const textType = 'TEXT NOT NULL';
-    const boolType = 'BOOLEAN NOT NULL';
-    const integerType = 'INTEGER NOT NULL';
+    // const boolType = 'BOOLEAN NOT NULL';
+    // const integerType = 'INTEGER NOT NULL';
 
     await db.execute('''
 CREATE TABLE $tableNotes ( 
-  ${NoteFields.id} $idType, 
-  ${NoteFields.isImportant} $boolType,
-  ${NoteFields.number} $integerType,
-  ${NoteFields.title} $textType,
-  ${NoteFields.description} $textType,
-  ${NoteFields.time} $textType
+  'id' $idType, 
+  'title' $textType,
+  'description' $textType,
+  'time' $textType
   )
 ''');
 //   await db.execute('''
@@ -64,53 +65,56 @@ CREATE TABLE $tableNotes (
 //    final id = await mydb!.insert(tableNotes, note.toJson());
 //   }
 
- Future<Note> readData(int id) async {
-  Database? mydb = await database ; 
-final response = await  mydb!.query(tableNotes,
-      columns: NoteFields.values,
-      where: '${NoteFields.id} = ?',
-      whereArgs: [id],);
-       if (response.isNotEmpty) {
-      return Note.fromJson(response.first);
-    } else {
-      throw Exception('ID $id not found');
-    }
-  // return response ; 
-}
+  read(String table)async{
+  // readDate(String sql)async{
+
+    Database? mydb = await database;
+    List<Map<String, Object?>> response = await mydb!.query(table);
+    return response;
+  }
 Future<List<Note>> readAllNotes() async {
   Database? mydb = await database ; 
+      final List<Map<String, dynamic>> maps = await mydb!.query(tableNotes);
 
 
-    final orderBy = '${NoteFields.time} ASC';
-    // final result =
-    //     await db.rawQuery('SELECT * FROM $tableNotes ORDER BY $orderBy');
+      return List.generate(
+        maps.length,
+            (index) {
+          return Note(
+            id: maps[index]["id"],
+            title: maps[index]["title"],
+            content: maps[index]["content"],
+            dateTimeEdited: maps[index]["dateTimeEdited"],
+            dateTimeCreated: maps[index]["dateTimeCreated"],
+          );
+        },
+      );
+    // final orderBy = '${NoteFields.time} ASC';
+    // // final result =
+    // //     await db.rawQuery('SELECT * FROM $tableNotes ORDER BY $orderBy');
 
-    final result = await mydb!.query(tableNotes, orderBy: orderBy);
+    // final result = await mydb!.query(tableNotes, orderBy: orderBy);
 
-    return result.map((json) => Note.fromJson(json)).toList();
+    // return result.map((json) => Note.fromJson(json)).toList();
   }
- Future<Note>insertData(Note note) async {
+ Future<int>insertData(Note note) async {
   Database? mydb = await database ; 
-  final  response = await  mydb!.insert(tableNotes, note.toJson());
-    return note.copy(id: response);
+  final  response = await mydb!.insert(tableNotes, note.toMap());
+  return response;
   // return response ; 
 }
  Future<int> updateData(Note note) async {
   Database? mydb = await database ; 
     final response = await  mydb!.update(
     tableNotes,
-      note.toJson(),
-      where: '${NoteFields.id} = ?',
-      whereArgs: [note.id],);
+        note.toMap(),
+        where: "id = ?",
+        whereArgs: [note.id],);
   return response ; 
 }
 Future<int> deleteData(int id) async {
   Database? mydb = await database ; 
-  final  response = await  mydb!.delete(
-      tableNotes,
-      where: '${NoteFields.id} = ?',
-      whereArgs: [id],
-    );
+  final  response = mydb!.delete(tableNotes);
   return response ; 
 }
   Future close() async {
@@ -119,9 +123,9 @@ Future<int> deleteData(int id) async {
 
     mydb!.close();
   }
-   mydeleteDatebase(String filePath)async{
-      final databasepath = await getDatabasesPath() ; 
-  final path = join(databasepath, filePath);  
+   mydeleteDatebase()async{
+      final databasepath = await getApplicationDocumentsDirectory() ; 
+  final path = join(databasepath.path, 'wael.db');  
      await deleteDatabase(path);
   }
  

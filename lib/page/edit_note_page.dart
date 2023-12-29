@@ -29,10 +29,8 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
   void initState() {
     super.initState();
 
-    isImportant = widget.note?.isImportant ?? false;
-    number = widget.note?.number ?? 0;
     title = widget.note?.title ?? '';
-    description = widget.note?.description ?? '';
+    description = widget.note?.content ?? '';
   }
 
   @override
@@ -90,12 +88,6 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
   }
 
   Future updateNote() async {
-    final note = widget.note!.copy(
-      isImportant: isImportant,
-      number: number,
-      title: title,
-      description: description,
-    );
 
     await sqlDb.updateData(note);
   }
@@ -103,10 +95,6 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
   Future addNote() async {
     final note = Note(
       title: title,
-      isImportant: true,
-      number: number,
-      description: description,
-      createdTime: DateTime.now(),
     );
 
     await sqlDb.insertData(note);

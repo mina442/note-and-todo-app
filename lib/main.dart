@@ -22,15 +22,17 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setSystemUIOverlayStyle
-    //   (SystemUiOverlayStyle(
-    //     statusBarColor: Colors.white,));
-    // return GetMaterialApp(
-     return MaterialApp(
+    SystemChrome.setSystemUIOverlayStyle
+      (SystemUiOverlayStyle(
+        statusBarColor: Colors.white,));
+    return GetMaterialApp(
+    //  return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: title,
       themeMode: ThemeMode.dark,
       theme: ThemeData(
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
         primaryColor: Colors.black,
         scaffoldBackgroundColor: Colors.blueGrey.shade900,
         appBarTheme: const AppBarTheme(

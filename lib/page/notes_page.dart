@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 import 'package:note_app/db/sqldb.dart';
 import 'package:note_app/widget/notecardwidget.dart';
 // import '../db/notes_database.dart';
@@ -88,9 +89,8 @@ class _NotesPageState extends State<NotesPage> {
             crossAxisCellCount: 1,
             child: GestureDetector(
               onTap: () async {
-                await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => NoteDetailPage(noteId: note.id!),
-                ));
+                Get.to(NoteDetail(noteId: note.id!),
+                );
 
                 refreshNotes();
               },
